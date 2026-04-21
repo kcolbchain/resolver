@@ -3,8 +3,8 @@
 //! In production, this submits to Flashbots Protect or a private mempool
 //! to avoid frontrunning.
 
-use crate::intents::SolverQuote;
 use crate::error::Result;
+use crate::intents::SolverQuote;
 
 /// Fill result from executing a solver quote on-chain.
 #[derive(Debug)]

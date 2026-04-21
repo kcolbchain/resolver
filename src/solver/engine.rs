@@ -4,8 +4,8 @@ use alloy::primitives::U256;
 use dashmap::DashMap;
 use std::sync::Arc;
 
+use crate::error::Result;
 use crate::intents::{Intent, IntentDecoder, SolverQuote};
-use crate::error::{ResolverError, Result};
 
 /// Configuration for the solver engine.
 #[derive(Debug, Clone)]
@@ -112,7 +112,9 @@ impl SolverEngine {
                     self.stats.intents_profitable += 1;
                     tracing::info!(
                         "💰 Profitable: {} | profit: ${:.2} | gas: ${:.2}",
-                        intent.id, quote.net_profit_usd, quote.gas_cost_usd
+                        intent.id,
+                        quote.net_profit_usd,
+                        quote.gas_cost_usd
                     );
                     profitable.push(quote);
                 }
@@ -145,8 +147,7 @@ impl SolverEngine {
         // In production: simulate the full swap path and compute exact output
         let surplus_usd = if surplus > U256::ZERO {
             // Rough estimation: assume 6 decimal stablecoin output
-            let surplus_f64 = surplus.to::<u128>() as f64 / 1e6;
-            surplus_f64
+            surplus.to::<u128>() as f64 / 1e6
         } else {
             0.0
         };
@@ -159,7 +160,11 @@ impl SolverEngine {
             amount_out: intent.current_amount_out,
             gas_cost_wei,
             gas_cost_usd,
-            net_profit_wei: if surplus > gas_cost_wei { surplus - gas_cost_wei } else { U256::ZERO },
+            net_profit_wei: if surplus > gas_cost_wei {
+                surplus - gas_cost_wei
+            } else {
+                U256::ZERO
+            },
             net_profit_usd,
             route: vec![], // populated by route finder in production
             profitable,
