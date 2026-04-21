@@ -105,7 +105,7 @@ impl Intent {
 
     /// Time remaining before expiry (in seconds).
     pub fn time_remaining(&self, now: u64) -> u64 {
-        if now >= self.deadline { 0 } else { self.deadline - now }
+        self.deadline.saturating_sub(now)
     }
 }
 

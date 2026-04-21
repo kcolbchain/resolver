@@ -3,9 +3,11 @@
 //! Supports ERC-7683 cross-chain intents and protocol-specific order formats
 //! (UniswapX Dutch orders, Across deposit orders, CoW Protocol GPv2 orders).
 
+mod across;
 mod types;
 mod uniswapx;
 
+pub use across::{AcrossDecoder, RoutingPreferences, V3DepositEvent};
 pub use types::*;
 pub use uniswapx::UniswapXDecoder;
 
