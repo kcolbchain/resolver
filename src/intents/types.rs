@@ -20,6 +20,7 @@ pub enum Chain {
     Optimism = 10,
     Base = 8453,
     Polygon = 137,
+    Unichain = 130,
 }
 
 impl Chain {
@@ -34,8 +35,20 @@ impl Chain {
             10 => Some(Chain::Optimism),
             8453 => Some(Chain::Base),
             137 => Some(Chain::Polygon),
+            130 => Some(Chain::Unichain),
             _ => None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Chain;
+
+    #[test]
+    fn unichain_id_round_trips() {
+        assert_eq!(Chain::Unichain.chain_id(), 130);
+        assert_eq!(Chain::from_id(130), Some(Chain::Unichain));
     }
 }
 
