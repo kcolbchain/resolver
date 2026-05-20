@@ -1,6 +1,6 @@
 //! resolver CLI — scan, solve, and monitor intent filling.
 
-use resolver::intents::{self, AcrossDecoder, IntentDecoder, UniswapXDecoder};
+use resolver::intents::{self, AcrossDecoder, CowDecoder, IntentDecoder, UniswapXDecoder};
 use resolver::monitor;
 use resolver::solver::{SolverConfig, SolverEngine};
 
@@ -34,6 +34,7 @@ fn build_decoder(
 ) -> resolver::Result<Box<dyn IntentDecoder>> {
     match protocol.to_ascii_lowercase().as_str() {
         "across" => Ok(Box::new(AcrossDecoder::new(chain))),
+        "cow" | "cowprotocol" | "cow-protocol" => Ok(Box::new(CowDecoder::new(chain))),
         _ => Ok(Box::new(UniswapXDecoder::new(chain)?)),
     }
 }
@@ -125,7 +126,7 @@ async fn main() -> resolver::Result<()> {
             println!();
             println!("Flags:");
             println!("  --chain      ethereum | arbitrum | optimism | base | polygon | unichain");
-            println!("  --protocol   uniswapx | across");
+            println!("  --protocol   uniswapx | across | cow");
         }
     }
 
