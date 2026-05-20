@@ -13,7 +13,7 @@ fn api_url(chain: Chain) -> Result<&'static str> {
         Chain::Ethereum => Ok("https://api.uniswap.org/v2/orders?orderStatus=open&chainId=1"),
         Chain::Arbitrum => Ok("https://api.uniswap.org/v2/orders?orderStatus=open&chainId=42161"),
         Chain::Base => Ok("https://api.uniswap.org/v2/orders?orderStatus=open&chainId=8453"),
-        Chain::Optimism | Chain::Polygon | Chain::Unichain => Err(unsupported_chain_error(chain)),
+        _ => Err(unsupported_chain_error(chain)),
     }
 }
 
@@ -212,7 +212,7 @@ mod tests {
     }
 
     #[test]
-    fn api_url_uses_explicit_supported_chains() {
+    fn supported_chains_use_chain_specific_urls() {
         assert_eq!(
             api_url(Chain::Ethereum).unwrap(),
             "https://api.uniswap.org/v2/orders?orderStatus=open&chainId=1"
@@ -228,7 +228,7 @@ mod tests {
     }
 
     #[test]
-    fn decoder_rejects_unsupported_uniswapx_chains() {
+    fn unsupported_chains_do_not_fall_back_to_mainnet() {
         for chain in [Chain::Optimism, Chain::Polygon, Chain::Unichain] {
             let err = expect_error(chain);
             assert_eq!(

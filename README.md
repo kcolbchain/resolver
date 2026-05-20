@@ -63,6 +63,8 @@ cargo run -- monitor
 | Across | 📋 Planned | Multi-chain |
 | CoW Protocol | 📋 Planned | Ethereum |
 
+UniswapX rejects unsupported chains instead of falling back to mainnet.
+
 ## Revenue Model
 
 Solvers earn fees from filling intents:

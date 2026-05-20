@@ -46,7 +46,7 @@ mod tests {
     use super::Chain;
 
     #[test]
-    fn unichain_id_round_trips() {
+    fn unichain_round_trips_chain_id() {
         assert_eq!(Chain::Unichain.chain_id(), 130);
         assert_eq!(Chain::from_id(130), Some(Chain::Unichain));
     }
