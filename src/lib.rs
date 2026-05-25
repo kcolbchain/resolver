@@ -7,6 +7,7 @@ pub mod execution;
 pub mod intents;
 pub mod monitor;
 pub mod solver;
+pub mod vault;
 
 mod error;
 pub use error::{ResolverError, Result};
