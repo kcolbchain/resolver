@@ -1,0 +1,12 @@
+{
+  "protocol": "cow",
+  "chain_id": 1,
+  "id": "0x7890abc123def4567890abc123def4567890abc123def4567890abc123def456",
+  "amount_in": "20000000000000000000",
+  "min_amount_out": "19500000000000000000",
+  "token_in": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  "token_out": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "deadline": 1800200000,
+  "dest_chain": "base",
+  "surplus_bps": 25
+}

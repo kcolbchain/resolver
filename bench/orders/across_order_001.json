@@ -1,0 +1,12 @@
+{
+  "protocol": "across",
+  "chain_id": 10,
+  "id": "0xdef4567890abc123def4567890abc123def4567890abc123def4567890abc123",
+  "amount_in": "5000000000000000000",
+  "min_amount_out": "4850000000000000000",
+  "token_in": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+  "token_out": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "deadline": 1800100000,
+  "dest_chain": "arbitrum",
+  "surplus_bps": 30
+}
