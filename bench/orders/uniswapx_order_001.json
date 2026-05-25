@@ -1,0 +1,12 @@
+{
+  "protocol": "uniswapx",
+  "chain_id": 1,
+  "id": "0xabc123def4567890abc123def4567890abc123def4567890abc123def4567890",
+  "amount_in": "1000000000000000000",
+  "min_amount_out": "950000000000000000",
+  "token_in": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+  "token_out": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  "deadline": 1800000000,
+  "dest_chain": "ethereum",
+  "surplus_bps": 50
+}
