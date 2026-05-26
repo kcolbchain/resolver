@@ -4,10 +4,12 @@
 //! (UniswapX Dutch orders, Across deposit orders, CoW Protocol GPv2 orders).
 
 mod across;
+mod cow_protocol;
 mod types;
 mod uniswapx;
 
 pub use across::{AcrossDecoder, RoutingPreferences, V3DepositEvent};
+pub use cow_protocol::CowProtocolDecoder;
 pub use types::*;
 pub use uniswapx::UniswapXDecoder;
 
