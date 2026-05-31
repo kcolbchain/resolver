@@ -20,6 +20,7 @@ fn parse_chain(s: &str) -> intents::Chain {
         "optimism" | "op" | "10" => intents::Chain::Optimism,
         "base" | "8453" => intents::Chain::Base,
         "polygon" | "matic" | "137" => intents::Chain::Polygon,
+        "unichain" | "uni" | "130" => intents::Chain::Unichain,
         other => {
             eprintln!("unknown chain '{other}', falling back to base");
             intents::Chain::Base
@@ -27,10 +28,13 @@ fn parse_chain(s: &str) -> intents::Chain {
     }
 }
 
-fn build_decoder(protocol: &str, chain: intents::Chain) -> Box<dyn IntentDecoder> {
+fn build_decoder(
+    protocol: &str,
+    chain: intents::Chain,
+) -> resolver::Result<Box<dyn IntentDecoder>> {
     match protocol.to_ascii_lowercase().as_str() {
-        "across" => Box::new(AcrossDecoder::new(chain)),
-        _ => Box::new(UniswapXDecoder::new(chain)),
+        "across" => Ok(Box::new(AcrossDecoder::new(chain))),
+        _ => Ok(Box::new(UniswapXDecoder::new(chain)?)),
     }
 }
 
@@ -53,7 +57,7 @@ async fn main() -> resolver::Result<()> {
 
     match command {
         "scan" => {
-            let decoder = build_decoder(protocol, chain);
+            let decoder = build_decoder(protocol, chain)?;
             let open = decoder.fetch_open_intents().await?;
 
             println!(
@@ -89,7 +93,7 @@ async fn main() -> resolver::Result<()> {
                 ..Default::default()
             };
             let mut engine = SolverEngine::new(config);
-            engine.add_decoder(build_decoder(protocol, chain));
+            engine.add_decoder(build_decoder(protocol, chain)?);
 
             println!("Running solver cycle...\n");
             let quotes = engine.cycle().await?;
@@ -120,7 +124,7 @@ async fn main() -> resolver::Result<()> {
             println!("  monitor  — display solver statistics");
             println!();
             println!("Flags:");
-            println!("  --chain      ethereum | arbitrum | optimism | base | polygon");
+            println!("  --chain      ethereum | arbitrum | optimism | base | polygon | unichain");
             println!("  --protocol   uniswapx | across");
         }
     }

@@ -8,13 +8,17 @@ use super::{Chain, Intent, IntentDecoder, Protocol};
 use crate::error::{ResolverError, Result};
 
 /// UniswapX API endpoints per chain.
-fn api_url(chain: Chain) -> &'static str {
+fn api_url(chain: Chain) -> Result<&'static str> {
     match chain {
-        Chain::Ethereum => "https://api.uniswap.org/v2/orders?orderStatus=open&chainId=1",
-        Chain::Arbitrum => "https://api.uniswap.org/v2/orders?orderStatus=open&chainId=42161",
-        Chain::Base => "https://api.uniswap.org/v2/orders?orderStatus=open&chainId=8453",
-        _ => "https://api.uniswap.org/v2/orders?orderStatus=open&chainId=1",
+        Chain::Ethereum => Ok("https://api.uniswap.org/v2/orders?orderStatus=open&chainId=1"),
+        Chain::Arbitrum => Ok("https://api.uniswap.org/v2/orders?orderStatus=open&chainId=42161"),
+        Chain::Base => Ok("https://api.uniswap.org/v2/orders?orderStatus=open&chainId=8453"),
+        Chain::Optimism | Chain::Polygon | Chain::Unichain => Err(unsupported_chain_error(chain)),
     }
+}
+
+fn unsupported_chain_error(chain: Chain) -> ResolverError {
+    ResolverError::Intent(format!("UniswapX not supported on {chain:?}"))
 }
 
 /// Raw UniswapX order from the API.
@@ -67,11 +71,13 @@ pub struct UniswapXDecoder {
 }
 
 impl UniswapXDecoder {
-    pub fn new(chain: Chain) -> Self {
-        Self {
+    pub fn new(chain: Chain) -> Result<Self> {
+        api_url(chain)?;
+
+        Ok(Self {
             chain,
             client: reqwest::Client::new(),
-        }
+        })
     }
 
     fn parse_order(&self, order: &UniswapXOrder) -> Result<Intent> {
@@ -148,7 +154,7 @@ impl UniswapXDecoder {
 #[async_trait]
 impl IntentDecoder for UniswapXDecoder {
     async fn fetch_open_intents(&self) -> Result<Vec<Intent>> {
-        let url = api_url(self.chain);
+        let url = api_url(self.chain)?;
 
         let resp: ApiResponse = self
             .client
@@ -191,5 +197,44 @@ impl IntentDecoder for UniswapXDecoder {
 
     fn protocol(&self) -> &str {
         "UniswapX"
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn expect_error(chain: Chain) -> ResolverError {
+        match UniswapXDecoder::new(chain) {
+            Ok(_) => panic!("expected {chain:?} to be unsupported"),
+            Err(err) => err,
+        }
+    }
+
+    #[test]
+    fn api_url_uses_explicit_supported_chains() {
+        assert_eq!(
+            api_url(Chain::Ethereum).unwrap(),
+            "https://api.uniswap.org/v2/orders?orderStatus=open&chainId=1"
+        );
+        assert_eq!(
+            api_url(Chain::Arbitrum).unwrap(),
+            "https://api.uniswap.org/v2/orders?orderStatus=open&chainId=42161"
+        );
+        assert_eq!(
+            api_url(Chain::Base).unwrap(),
+            "https://api.uniswap.org/v2/orders?orderStatus=open&chainId=8453"
+        );
+    }
+
+    #[test]
+    fn decoder_rejects_unsupported_uniswapx_chains() {
+        for chain in [Chain::Optimism, Chain::Polygon, Chain::Unichain] {
+            let err = expect_error(chain);
+            assert_eq!(
+                err.to_string(),
+                format!("Intent error: UniswapX not supported on {chain:?}")
+            );
+        }
     }
 }
