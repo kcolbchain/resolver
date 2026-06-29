@@ -50,9 +50,9 @@ impl CowDecoder {
             Chain::Arbitrum => Ok("https://api.cow.fi/arbitrum_one/api/v1/auction"),
             Chain::Base => Ok("https://api.cow.fi/base/api/v1/auction"),
             Chain::Polygon => Ok("https://api.cow.fi/polygon/api/v1/auction"),
-            Chain::Optimism => Err(ResolverError::Intent(
-                "CoW Protocol is not supported on Optimism".into(),
-            )),
+            Chain::Optimism | Chain::Unichain => Err(ResolverError::Intent(format!(
+                "CoW Protocol is not supported on {chain:?}"
+            ))),
         }
     }
 

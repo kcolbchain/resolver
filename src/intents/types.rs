@@ -133,6 +133,11 @@ pub struct SolverQuote {
     pub net_profit_usd: f64,
     pub route: Vec<RouteStep>,
     pub profitable: bool,
+    /// Intent deadline (unix seconds) carried through so the executor can
+    /// re-check expiry at fill time. `None` when unknown (deadline check
+    /// is then skipped).
+    #[serde(default)]
+    pub deadline: Option<u64>,
 }
 
 /// A single step in a multi-hop route.

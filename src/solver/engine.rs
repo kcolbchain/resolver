@@ -168,6 +168,7 @@ impl SolverEngine {
             net_profit_usd,
             route: vec![], // populated by route finder in production
             profitable,
+            deadline: Some(intent.deadline),
         })
     }
 
